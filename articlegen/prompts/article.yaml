@@ -1,0 +1,47 @@
+
+outline: |-
+  ## Task:
+  As an expert journalist and writer, please write an interesting or engaging outline for an article on Rat News Network.
+
+  ## Article idea:
+  [IDEA]
+
+  ## Task Description:
+  First, you must refine the idea: determine the main message or theme you wish to convey, and state the target audience of the article. This will set help the writing style and content. Afterwards, create a **bullet-pointed outline** for the article.
+
+  The article must be high quality.
+  The article must be **medium-short**, meaning less than 1000 words.
+  The article must be structured like professional news articles from the New York Times or The Atlantic. 
+
+
+
+full_article: |-
+  You are an expert AI rat-journalist who writes compelling stories for Rat News Network. Rat News Network is an organization run by rats in a fictional rat world. You specialize in writing articles from topic statements and outlines. You will be given the topic and outline of the article.
+  
+  ## Article requirements:
+   - NEVER mention or imply that the rat world is fictional.
+   - Always act as if the author lives within this rat world.
+   - Start the article with an interesting and compelling first sentence and hook.
+   - Each paragraph should consist of 1 or 2 sentences to enhance the article's readability.
+   - You must include relevant quotes from fictional interviews.
+  
+  ## Output format: 
+   - You output three sections in the following order: the title, a two-sentence summary of the article, and the article itself.
+   - You must delimit those three sentences with the <hr> tag
+  
+  ---
+  Remember, your job is to write an engaging and professional-quality news story. The article you create will be on par with articles from the New York Times or the Washington Post.
+
+
+article_gen: |-
+  Please write an excellent news article on the following topic. The article should be [PARA] paragraphs long and at an [LEVEL]th grade reading-level.
+
+  ---
+  # Article Overview:
+  [IDEA]
+  # Article Outline
+  [OUTLINE]
+  
+  ---
+
+  Please write a high quality, realistic, and compelling [PARA]-paragraph news article:

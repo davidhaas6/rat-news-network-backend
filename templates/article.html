@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RNN</title>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <!-- <link href="http://thomasf.github.io/solarized-css/solarized-light.min.css" rel="stylesheet"></link> -->
+    <!-- <link href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" rel="stylesheet"></link> -->
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>RatNewsNetwork</h1>
+            <!-- <nav>
+                <a href="#">Home</a> |
+                <a href="#">News</a> |
+                <a href="#">Contact</a>
+            </nav> -->
+        </div>
+    </header>
+
+    <div class="container content">
+
+        <h1>{{ title }}</h1>
+        <div class="overview">{{ overview|safe }}</div>
+        <br>
+        <div class="article-body">{{ body|safe }}</pre>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 RatNewsNetwork. All rights reserved.</p>
+    </footer>
+</body>
+</html>

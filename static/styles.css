@@ -1,0 +1,118 @@
+:root {
+    --color1: #f5ca54;
+    --color2: #fbe8cc;
+    --color3: #000000;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: var(--color3);
+    background: white;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    /* overflow: hidden; */
+}
+
+
+header {
+    background: var(--color1);
+    color: var(--color3);
+    /* padding-top: -5px; */
+    min-height: 70px;
+}
+
+header a {
+    color: var(--color3);
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+header h1 {
+    font-size: 60px;
+}
+
+.content {
+    padding: 20px;
+}
+
+.content h1 {
+    font-size: 40px;
+}
+
+.content p {
+    line-height: 1.6;
+}
+
+footer {
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.article-body {
+    overflow-wrap: normal;
+    width: 70%;
+    font-size: 1em;
+    background: white;
+}
+
+.overview {
+    color: rgba(1, 1, 1, .8);
+    /* background: var(--color2); */
+    font-weight: 700;
+    width: 100%;
+}
+
+
+
+main {
+    display: flex;
+    /* Changed to flexbox for better control of text wrapping */
+}
+
+aside {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+    background-color: #f9f9f9;
+    /* Adjust color to match mockup */
+    margin-left: 1em;
+    /* Ensure space between the main body text */
+    width: 200px;
+    /* Fixed width for the overview box */
+    float: right;
+    /* Added float to allow text to wrap around */
+    max-height: fit-content;
+}
+
+section {
+    flex: 1;
+    padding: 1em;
+}
+
+/* Clear float */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    main {
+        flex-direction: column;
+    }
+
+    aside {
+        float: none;
+        margin-left: 0;
+        width: auto;
+        /* Full width on small screens */
+    }
+}

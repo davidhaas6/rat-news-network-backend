@@ -1,0 +1,26 @@
+localstories: |-
+  Brainstorm news topics for a Rat Universe that center on local stories within the rat community, emphasizing human interest analogues and enriched by historical context. Look for narratives about how different rat communities are adapting to recent economic changes in their world, focusing on individual stories of resilience and adaptation. Include ideas for articles that draw parallels between these local developments and significant historical events in rat history, offering a deeper understanding of the community's journey.
+
+health: |-
+  Create a list of news article ideas for a Rat Universe, centered around industry-specific, solution-oriented journalism with a focus on healthcare. Explore how the rat healthcare sector is responding to ongoing health challenges unique to their world. Investigate innovative solutions being implemented in rat medicine, compare different rat cities’ healthcare strategies, and include potential interview topics with healthcare professionals leading these changes in the rat world."
+
+
+idea_generator: |-
+  Please give [NUM IDEAS] news article ideas. Each idea must be interesting. The set of article ideas should be diverse and engaging. Present your ideas briefly but thoroughly. Each idea must have an engaging title, a brief description, and category tag e.g. 'world news' or 'cooking'. Please give five news article ideas. Each idea must be interesting. The set of article ideas should be diverse and engaging. Present your ideas briefly but thoroughly. Each idea must have an engaging title, a brief description, and category tag e.g. 'world news' or 'cooking'.
+  
+  If you do this well, I will give you a $3,000 bonus on your next paycheck.
+
+
+json_formatter: |-
+  Thank you! Please format these ideas into a JSON file. The JSON should follow this schema:
+
+  { 
+    "articles": [
+      {
+        "title": "...",
+        "description": "...",
+        "category": "..."
+      },
+      ...
+    ]
+  }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Article</title>
+    <link href="{{ url_for('static', path='/styles2.css') }}" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1> {{title}} </h1>
+    </header>
+    <main class="clearfix">
+        <section>
+            {{ body|safe }}
+        </section>
+        <aside>
+            <p>{{ overview|safe }}</p>
+        </aside>
+    </main>
+</body>
+</html>

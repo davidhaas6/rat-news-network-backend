@@ -1,0 +1,118 @@
+:root {
+    --color1: #fffdeb;
+    --color2: #020113;
+}
+
+body, html {
+    font-family: Arial, sans-serif;
+    background-color: var(--color1);
+    color: var(--color2);
+    margin: 0;
+    padding: 0;
+    /* height: 100%; */
+    min-height: 100vh;
+    min-width: 100%;
+}
+
+header {
+    background-color: var(--color1); /* Adjust the color to match the mockup */
+    margin-top: 0;
+    text-align: left;
+    font-size: 35px;
+}
+
+.frontpage {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: stretch;
+
+    min-height: 100vh;
+    min-width: 100%;
+    /* overflow-y: scroll; */
+}
+
+.frontpage a {
+    color: var(--color2);
+  text-decoration: none; /* no underline */
+}
+
+.articlerow {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.preview {
+    /* min-width: 30%; */
+    max-width: 30%; 
+    min-height: 40vh;
+    border: 1px solid black;
+    /* margin: 5px; */
+    font-size: small;
+    text-align: left;
+    align-items: start;
+
+    flex-shrink: 0;
+    width: fit-content;
+}
+
+.preview h1 {
+    font-size: 30px;
+    font-weight: 700;
+    min-height: 50%;
+    max-width: 50%;
+}
+
+.article-previews .sm {
+    flex-grow: 1;
+}
+
+.article-previews .md {
+    flex-grow: 2;
+    min-width: 40%;
+    max-width: 50%;
+}
+.article-previews .lg {
+    flex-grow: 3;
+}
+
+
+
+/* Articles */
+main {
+    display: flex; /* Changed to flexbox for better control of text wrapping */
+    /* margin: 1em; */
+}
+
+aside {
+    border: 1px solid #ccc;
+    padding: .5em;
+    background-color: #f9f9f9; /* Adjust color to match mockup */
+    margin-left: 1em; /* Ensure space between the main body text */
+    width: 200px; /* Fixed width for the overview box */
+    float: right; /* Added float to allow text to wrap around */
+    height: fit-content;
+}
+
+section {
+    flex: 1;
+    padding: 1em;
+}
+
+/* Clear float */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    main {
+        flex-direction: column;
+    }
+    aside {
+        float: none;
+        margin-left: 0;
+        width: auto; /* Full width on small screens */
+    }
+}
