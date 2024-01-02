@@ -3,6 +3,8 @@ from typing import List
 import os
 from pathlib import Path
 from dataclasses import dataclass
+import json
+import logging
 
 ARTICLE_PATH = (Path(__file__).parent.absolute() / "static" / "articles" ).as_posix()
 
@@ -13,20 +15,26 @@ class Article:
     body: str
     overview: str = None
     author: str = 'Ratso Remulini'
-    image: str = None
+    url: str = None
+    img_path: str = None
+
+    def from_json(json: dict, id=None):
+        if 'id' not in json and id is not None:
+            return Article(**json, id=id)
+        return Article(**json)
 
 
 def get_articles() -> List[str]:
     articles = []
     article_dir = _daily_article_dir()
     for article_filename in os.listdir(article_dir):
+        if not article_filename.endswith('.json'):
+            continue
         filename = article_filename[:article_filename.rfind('.')]
         with open(os.path.join(article_dir, article_filename)) as f:
-            article = f.read()
-            title, overview, body = article.split('---')
-            if len(overview) == 0:
-                overview = None
-        articles.append(Article(filename, title, body, overview))
+            logging.debug(f'Loading file {filename}')
+            article = json.loads(f.read())
+        articles.append(Article.from_json(article, id=filename))
     return articles
 
 

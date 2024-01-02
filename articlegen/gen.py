@@ -1,16 +1,21 @@
 # generate news articles
-from typing import Tuple, Union
+from multiprocessing import Pool
+from typing import Tuple, Union, List
 import logging
 import os
 from openai import OpenAI
 import yaml
 import json
+import uuid
 
 VERBOSE = False
 journalist1_system = {
     "role": "system",
     "content": "Your name is Whisker Walters. You are a famous journalist and the chief news editor for Rat News Network. Your job is to come up with the next juicy story."   # noqa: E501
 }
+
+with open('prompts/system.yaml') as f:
+    systems = yaml.safe_load(f)
 
 client = OpenAI(
     # This is the default and can be omitted
@@ -26,14 +31,27 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def new_articles(num: int):
-    ideas = article_ideas(num)
-    ideas = json.loads(ideas)
+def new_articles(num: int) -> List[dict]:
+    if num <= 0:
+        return []
+    ideas_str = article_ideas(num)
+    ideas = json.loads(ideas_str)
     ideas = ideas[list(ideas.keys())[0]]
-    idea = ideas[0]
-    title, overview, body = article_body(json.dumps(idea))
-    article_image(json.dumps(idea))
-    return title, overview, body
+    with Pool(min(num, os.cpu_count())) as pool:
+        articles = pool.map(article_from_idea, map(json.dumps,ideas))   
+
+    return articles
+
+
+def article_from_idea(idea: str) -> dict:
+    try:
+        article = json.loads(article_body(idea))
+        article['url'] = article_image(idea)
+        logging.info(f'*Article created*\nTitle: {article["title"]}\nImage: {article["url"]}\nOverview:{article["overview"]}')
+    except Exception as e:
+        logging.error(e)
+        article = {}
+    return article
 
 
 def _cli_main():
@@ -45,27 +63,8 @@ def _cli_main():
     if 'idea' in action:
         print("\n***INITIAL IDEAS:")
         ideas = article_ideas(5)
-        print("\n\n\n***IDEA SELECTION:")
-        
-        ideas = json.loads(ideas)
-        ideas = ideas[list(ideas.keys())[0]]
-        for idea in ideas:
-            try:
-                logging.info(idea['title'])
-                image_url = article_image(json.dumps(idea))
-                # article_outline = 
-
-            except KeyError as e:
-                logging.error("Error: %s. Could not parse JSON from: \n%s",str(e), idea)
-            
-            # create image
-            
-            # create ou
-
-        # select_idea(ideas)
     elif 'full' in action:
-        new_articles(1)
-    
+        logging.info(new_articles(3))
     elif 'image' in action:
         url = article_image("""{
       "title": "The Secret to Squeaky Clean Whiskers: Rat Beauticians Revealed",
@@ -74,16 +73,9 @@ def _cli_main():
     }""")
         print(url)
         logging.info(url)
+    elif 'topic' in action:
+        article_from_idea(sys.argv[2])
 
-
-def get_text(chat_completion) -> str:
-    text = chat_completion.choices[0].message.content
-    if VERBOSE:
-        print(text)
-        # logger.info()
-        logger.debug('\n%s', text)
-    # TODO: error handle
-    return text
 
 
 def get_ad_prompt(article: str) -> str:
@@ -109,7 +101,7 @@ def article_image(article_idea: str) -> str:
     return image_url
 
 
-def article_ideas(n, system_msg=journalist1_system) -> str:
+def article_ideas(n, system_prompt='whisker') -> str:
     """Generate n 1-sentence article ideas
 
     Args:
@@ -122,19 +114,22 @@ def article_ideas(n, system_msg=journalist1_system) -> str:
         prompts = yaml.safe_load(f)
     
     convo_1_ideas = [
-        system_msg,
+        {
+            "role": "system",
+            "content": systems[system_prompt],
+        },
         {
             "role": "user",
-            "content": prompts['idea_generator'].replace('[NUM IDEAS]', str(n))
+            "content": prompts['idea_generator'].replace('{{n}}', str(n))
         }
     ]
     chat_completion = client.chat.completions.create(
         messages=convo_1_ideas,
-        # model="gpt-4-1106-preview",
-        model="gpt-3.5-turbo",
+        model="gpt-4",
+        # model="gpt-3.5-turbo",
         temperature=1
     )
-    ideas = get_text(chat_completion)
+    ideas = _get_text(chat_completion)
 
     convo_2_discretize = convo_1_ideas + [
         {
@@ -152,14 +147,8 @@ def article_ideas(n, system_msg=journalist1_system) -> str:
         temperature=0
     )
 
-    discrete_ideas = get_text(chat_completion2)
-    if '{' not in discrete_ideas or '}' not in discrete_ideas:
-        logger.warning(f'''JSON formatting of generation may be incorrect. brackets are 
-                       missing.\n generation length: {len(discrete_ideas)}
-                       generation:{discrete_ideas}''')
-        return discrete_ideas
-    idea_json = discrete_ideas[discrete_ideas.find('{'):discrete_ideas.rfind('}')+1]
-    return idea_json
+    discrete_ideas = _get_text(chat_completion2)
+    return _extract_jsonstr(discrete_ideas)
 
 
 def select_idea(ideas: str) -> str:
@@ -176,7 +165,7 @@ def select_idea(ideas: str) -> str:
         ],
         model="gpt-3.5-turbo",
     )
-    best_article = get_text(chat_completion)
+    best_article = _get_text(chat_completion)
 
     chat_completion = client.chat.completions.create(
         messages=[
@@ -199,7 +188,7 @@ def select_idea(ideas: str) -> str:
         ],
         model="gpt-3.5-turbo"
     )
-    idea_json = get_text(chat_completion)
+    idea_json = _get_text(chat_completion)
     idea_json = idea_json[idea_json.find('{'):idea_json.rfind('}')+1]
     return idea_json
 
@@ -218,31 +207,23 @@ def article_outline(idea: str) -> str:
     
     chat_completion = client.chat.completions.create(
         messages=[
-            journalist1_system,
+            {
+                "role": "system",
+                "content": systems['whisker'],
+            },
             {
                 "role": "user",
-                "content": prompts['outline'].replace('[IDEA]',idea.strip()),
+                "content": prompts['outline'].replace('{{idea}}',idea.strip()),
             }
         ],
         # model="gpt-3.5-turbo",
         model="gpt-4-1106-preview",
+        temperature=0.2
     )
-    return get_text(chat_completion)
+    return _get_text(chat_completion)
 
 
-prompt_body_usr = """Please write an excellent news article on the following topic. The article should be [PARA] paragraphs long and at an [LEVEL]th grade reading-level.
-
----
-# Article Overview:
-[IDEA]
-# Article Outline
-[OUTLINE]
----
-
-Please write a high quality, realistic, and compelling [PARA]-paragraph news article:"""
-
-
-def article_body(idea: str, n_paragraphs=5, reading_level=8) -> Union[Tuple[str], None]:
+def article_body(idea: str, num_words=500) -> str:
     """Generate the actual text for an article
 
     Args:
@@ -255,57 +236,66 @@ def article_body(idea: str, n_paragraphs=5, reading_level=8) -> Union[Tuple[str]
     Returns:
         str: the article's text
     """
-    outline = article_outline(idea)
-
-    user_prompt = prompt_body_usr.replace('[PARA]', str(n_paragraphs)) \
-        .replace('[LEVEL]', str(reading_level)) \
-        .replace('[IDEA]', idea) \
-        .replace('[OUTLINE]', outline)
+    outline = article_outline(idea.strip())
+    with open('prompts/article.yaml','rb') as f:
+        prompts = yaml.safe_load(f)
 
     chat_completion = client.chat.completions.create(
         messages=[
             {
                 "role": "system",
-                "content": """You are an expert AI rat-journalist who writes compelling stories for Rat News Network. Rat News Network is an organization run by rats in a fictional rat world. You specialize in writing articles from topic statements and outlines. You will be given the topic and outline of the article.\n\n## Article requirements:\n - NEVER mention or imply that the rat world is fictional.\n - Always act as if the author lives within this rat world.\n - Start the article with an interesting and compelling first sentence and hook.\n - Each paragraph should be 1-2 sentences, with a focus on readability.\n - You must include relevant quotes from fictional interviews.\n\n---\n## Output format:\n - You output three sections in the following order: the title, a two-sentence summary of the article, and the article itself.\n - You must delimit those three sentences with the <hr> tag\n\n---\nRemember, your job is to write an engaging and professional-quality news story. The article you create will be on par with articles from the New York Times or Al Jazeera.""" # noqa: E501 
+                "content": systems['whisker'],
             },
             {
                 "role": "user",
-                "content": user_prompt
+                "content":  prompts['article_gen'].replace('{{idea}}', idea) \
+                                                  .replace('{{outline}}', outline) \
+                                                  .replace('{{num_words}}', str(num_words))
             }
         ],
         # model="gpt-3.5-turbo",
         model="gpt-4-1106-preview",
     )
+    raw_article = _get_text(chat_completion).strip()
 
-    article_sections = get_text(chat_completion).split('<hr>')
-    num_sections = len(article_sections)
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "system",
+                "content": systems['discretize']
+            },
+            {
+                "role": "user",
+                "content":prompts['articleToJson'].replace('{{article}}', raw_article)
+            }
+        ],
+        model="gpt-3.5-turbo",
+        # model="gpt-4-1106-preview",
+        temperature=0
+    )
 
-    logger.debug(get_text(chat_completion))
-
-    if num_sections != 3:
-        logger.warning(f"Article prompt returned {num_sections} sections instead of 3")
-
-    if num_sections == 3:
-        title, overview, body = article_sections[:3]
-        return title, overview, body
-    elif num_sections >= 3:
-        title, overview = article_sections[:2]
-        return title, overview, '\n. . .\n'.join(article_sections[2:])
-    elif num_sections == 2:
-        title_overview, body = article_sections
-        if '\n' in title_overview:
-            title, overview = title_overview.strip().split('\n')[:2]
-            return title, overview, body
-        return title_overview, '', body
-    elif num_sections == 1:
-        if '\n' in article_sections[0]:
-            lines = article_sections[0].strip().split('\n')
-            title = lines[0]
-            body = '\n'.join(lines[1:])
-            return title,'',body
-        return '', '', article_sections[0]
+    article_text = _get_text(chat_completion)
     
-    return None
+    return _extract_jsonstr(article_text)
+
+
+def _get_text(chat_completion) -> str:
+    text = chat_completion.choices[0].message.content
+    if VERBOSE:
+        print(text)
+        # logger.info()
+        logger.debug('\n%s', text)
+    # TODO: error handle
+    return text
+
+
+def _extract_jsonstr(text: str) -> str:
+    if '{' not in text or '}' not in text:
+        logger.warning(f'''JSON formatting of generation may be incorrect. brackets are 
+                       missing.\n generation length: {len(text)}
+                       generation:{text}''')
+        return text
+    return text[text.find('{'):text.rfind('}')+1]
 
 
 if __name__ == '__main__':

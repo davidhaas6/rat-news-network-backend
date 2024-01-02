@@ -2,21 +2,36 @@
 <html>
 <head>
     <title>RNN</title>
-    <link href="{{ url_for('static', path='/styles2.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <!-- <link href="http://thomasf.github.io/solarized-css/solarized-light.min.css" rel="stylesheet"></link> -->
+    <!-- <link href="http://thomasf.github.io/solarized-css/solarized-dark.min.css" rel="stylesheet"></link> -->
 </head>
-<body class="frontpage">
+<body>
+    <header>
+        <div class="container">
+            <h1>Rat News Network</h1>
+            <!-- <nav>
+                <a href="#">Home</a> |
+                <a href="#">News</a> |
+                <a href="#">Contact</a>
+            </nav> -->
+        </div>
+    </header>
+
+    <div class="container">
         {% for article in articles %}
         {% set articlesize = "md" if (loop.index0 % 2 == 0) else "sm" %}
-        <a class="{{'preview ' + articlesize}}" href="{{url_for('read_item', article_id=article.id)}}">
-            <div>
-                <h1>{{article.title}}</h1>
-                <div class="overview">{{article.overview}}</div>
-                {{article.id}}
-            </div>
-        </a>
+        <div class="preview sm">
+            <img src="{{url_for('static', path=article.img_path)}}" alt="article image">
+            <a href="{{url_for('read_item', article_id=article.id)}}">
+            <h1>{{article.title}}</h1></a>
+            <div class="overview">{{article.overview}}</div>
+        </div>
         {% endfor %}
-    <!-- <footer>
+    </div>
+
+    <footer>
         <p>&copy; 2023 RatNewsNetwork. All rights reserved.</p>
-    </footer> -->
+    </footer>
 </body>
 </html>

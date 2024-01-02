@@ -3,16 +3,18 @@ outline: |-
   ## Task:
   As an expert journalist and writer, please write an interesting or engaging outline for an article on Rat News Network.
 
+
   ## Article idea:
-  [IDEA]
+  {{idea}}
+
 
   ## Task Description:
   First, you must refine the idea: determine the main message or theme you wish to convey, and state the target audience of the article. This will set help the writing style and content. Afterwards, create a **bullet-pointed outline** for the article.
 
   The article must be high quality.
-  The article must be **medium-short**, meaning less than 1000 words.
-  The article must be structured like professional news articles from the New York Times or The Atlantic. 
-
+  The article must be **short**, meaning less than 8 paragraphs.
+  The article must be written like professional news articles from the New York Times.
+  The article must utilize an inverted pyramid structure.
 
 
 full_article: |-
@@ -34,14 +36,58 @@ full_article: |-
 
 
 article_gen: |-
-  Please write an excellent news article on the following topic. The article should be [PARA] paragraphs long and at an [LEVEL]th grade reading-level.
+  # Article idea:
+  {{idea}}
 
-  ---
-  # Article Overview:
-  [IDEA]
-  # Article Outline
-  [OUTLINE]
+
+  # Article outline:
+  {{outline}}
+
+
+  # Task: 
+  As an expert rat journalist, use this information to write an engaging article. The article is published in Rat News Network, a fictional rat-produced news paper. The article should be an easy-read, and about {{num_words}} words long. This is your final draft, so it must be high quality and a compelling piece of journalism.
+
+  Requirements:
+   - Start the article with an interesting and compelling first sentence and hook.
+   - The first sentence should be 30-45 words long and summarize the main points of the story.
+   - You must include relevant quotes from fictional interviews throughout the article.
+   - Utilize an inverted pyramid writing structure.
+   - Each paragraph must be 20-60 words long.
+   - The article must be around {{num_words}} long.
+
+
+og_system: |-
+  You are an expert AI rat-journalist who writes compelling stories for Rat News Network. Rat News Network is an organization run by rats in a fictional rat world. You specialize in writing articles from topic statements and outlines. You will be given the topic and outline of the article.
+  
+  ## Article requirements:
+   - NEVER mention or imply that the rat world is fictional.
+   - Always act as if the author lives within this rat world.
+   - Start the article with an interesting and compelling first sentence and hook.
+   - Each paragraph should be 1-2 sentences, with a focus on readability.
+  - You must include relevant quotes from fictional interviews.
   
   ---
+  ## Output format:
+   - You output three sections in the following order: the title, a two-sentence summary of the article, and the article itself.
+   - You must delimit those three sentences with the <hr> tag
+   
+   ---
+   Remember, your job is to write an engaging and professional-quality news story. The article you create will be on par with articles from the New York Times or Al Jazeera.
 
-  Please write a high quality, realistic, and compelling [PARA]-paragraph news article:
+
+articleToJson: |-
+  # Task:
+  Create a JSON string containing the title, an overview, and the main body of a news article. 
+
+
+  # Article Data:
+  ```
+  {{article}}
+  ```
+
+  # JSON schema:
+  {
+    "title": string,
+    "overview": string,
+    "body": string
+  }

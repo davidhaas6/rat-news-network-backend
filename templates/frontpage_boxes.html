@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RNN</title>
+    <link href="{{ url_for('static', path='/styles2.css') }}" rel="stylesheet">
+</head>
+<body class="frontpage">
+        {% for article in articles %}
+        {% set articlesize = "md" if (loop.index0 % 2 == 0) else "sm" %}
+        <a class="{{'preview ' + articlesize}}" href="{{url_for('read_item', article_id=article.id)}}">
+            <div>
+                <h1>{{article.title}}</h1>
+                <div class="overview">{{article.overview}}</div>
+                {{article.id}}
+            </div>
+        </a>
+        {% endfor %}
+    <!-- <footer>
+        <p>&copy; 2023 RatNewsNetwork. All rights reserved.</p>
+    </footer> -->
+</body>
+</html>

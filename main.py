@@ -20,7 +20,7 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
-    preview_articles = sample(articlelib.get_articles(), k=5)
+    preview_articles = sample(articlelib.get_articles(), k=3)
     print(list(map(lambda k: k.title, preview_articles)))
     return templates.TemplateResponse(
         request=request, 
@@ -44,11 +44,12 @@ def read_item(request: Request, article_id: str):
         article = matches[0]
         return templates.TemplateResponse(
             request=request, 
-            name="article2.html",
+            name="article.html",
             context={
                 "title": article.title,
                 "overview": article.overview,
-                "body": article.body.replace('\n','<br >')
+                "body": article.body.replace('\n','<br >'),
+                "img_path": article.img_path
             }
         )
     return templates.TemplateResponse(
