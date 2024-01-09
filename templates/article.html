@@ -19,10 +19,11 @@
         <div class="overview">{{ overview|safe }}</div>
         <br>
         <img src="{{url_for('static', path=img_path)}}" alt="article image">
-        
-        
         <br>
-        <div class="article-body">{{ body|safe }}</pre>
+        <span class="article-body">
+            <span class="lead">{{lead}}</span>
+            {{ body|safe }}
+        </span>
     </div>
 
     <footer>

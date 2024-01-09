@@ -11,17 +11,20 @@ import uuid
 import json
 import requests
 import logging
+import time
 
 # logging.
 
 
 ARTICLE_PATH = (Path(__file__).parent.parent.absolute() / "static" / "articles" ).as_posix()
 
-print(ARTICLE_PATH)
 
 def main():
     if len(sys.argv) > 1:
-        write_articles(int(sys.argv[1]))
+        start=time.time()
+        n = int(sys.argv[1])
+        write_articles(n)
+        logging.info(f'Generated {n} articles in {round(time.time()-start,2)} seconds')
         # for apath in get_article_paths():
         #     with open(apath, 'r') as f:
         #         article = json.load(f)
