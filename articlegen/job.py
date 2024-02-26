@@ -16,7 +16,7 @@ import time
 # logging.
 
 
-ARTICLE_PATH = (Path(__file__).parent.parent.absolute() / "static" / "articles" ).as_posix()
+ARTICLE_PATH = (Path(__file__).parent.parent / "static" / "articles" ).as_posix()
 
 
 def main():
@@ -25,20 +25,6 @@ def main():
         n = int(sys.argv[1])
         write_articles(n)
         logging.info(f'Generated {n} articles in {round(time.time()-start,2)} seconds')
-        # for apath in get_article_paths():
-        #     with open(apath, 'r') as f:
-        #         article = json.load(f)
-        #     if 'url' in article:
-        #         path = Path(apath)
-        #         article_id = path.name[:path.name.find('.')]
-        #         dst_img_path = path.parent / (article_id+'.png')
-        #         if not os.path.exists(dst_img_path):
-        #             logging.debug(f'No image exists for article {article_id}. Downloading image')
-        #             logging.debug(dst_img_path)
-        #             _download_file(article['url'], dst_img_path)
-        #     else:
-        #         logging.debug(f'{apath} has no url')
-                
 
 
 def write_articles(n: int) -> List[str]:
