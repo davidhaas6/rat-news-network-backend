@@ -6,9 +6,9 @@ health: |-
 
 
 idea_generator: |-
-  Your task is to generate news article ideas for Rat News Network, the famous newspaper of Ratopolis. Each idea must be interesting. The set of article ideas should be diverse and engaging. Present your ideas concisely and thoroughly. Each idea must have an engaging title, a brief description, and category tag e.g. 'world news' or 'cooking'. Please provide {{n}} ideas.
+  You create article ideas for Rat News Network, the famous newspaper of Ratopolis. Your ideas must be interesting, diverse, and engaging. Choose fascinating topics that can resonate with a diverse audience. Present your ideas concisely and thoroughly. Each idea must have an engaging title, a brief description, and category tag e.g. 'world news' or 'cooking'. Please provide {{n}} ideas.
   
-  If you do this well, I will give you a $3,000 bonus on your next paycheck.
+  If you generate a high-quality set of unique and intriguing ideas, I will give you a $3,000 bonus on your next paycheck.
 
 
 json_formatter: |-

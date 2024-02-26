@@ -1,7 +1,27 @@
+brainstorming: |-
+  You are a famous graphic designer for Rat News Network. You must create an eye-catching graphic or image to put after the first paragraph in this article. The image you create should use a whimsical comic book or graphic novel style, with a strong use of line art and bold colors. The image should be highly stylized, imaginative, and incorporate a clear narrative element that directly relates to the news story. Think about including characters, settings, or symbolic items that resonate with the core message of the article, making the image both engaging and relevant to the readers.
+  
+  
+  # Story idea:
+  ```json
+  {{idea}}
+  ```
 
-main_image: |-
-  You are a graphic designer for a rat newspaper. You must create an eye-catching graphic or image to put after the first paragraph in this article. The image you create should use a whimsical comic book or graphic novel style, with a strong use of line art and bold colors. Strive for highly a stylized and imaginative image with a clear narrative element.
 
-  ## News idea:
-  [IDEA]
+  # Story Outline:
+  """
+  {{outline}}
+  """
 
+
+  # Task:
+  You are designing the news story's primary graphic. As an expert AI graphic designer, discuss interesting aspects of the story to provide three great ideas for the story's visual. The visual should add to the story and be a realistic photograph, drawing, or computer-generated graphic. It should be eye-catching, distinct, and high quality.
+
+
+select: |-
+  Discuss which idea is best. Afterward, create a JSON-string with the idea, its description, the image's style, and a description of its narrative element.
+
+
+create: |-
+  Create this image:
+  {{image_idea}}
