@@ -17,8 +17,10 @@
         <!-- Have the image be a background to the title. it should have a gradient of fading transparency -->
         <h1>{{ title }}</h1>
         <div class="overview">{{ overview|safe }}</div>
+        {% if img_path != None %}
         <br>
         <img src="{{url_for('static', path=img_path)}}" alt="article image">
+        {% endif %}
         <br>
         <span class="article-body">
             <span class="lead">{{lead}}</span>
@@ -27,7 +29,7 @@
     </div>
 
     <footer>
-        <p>&copy; 2023 RatNewsNetwork. All rights reserved.</p>
+        <p>AI Generated. &copy; 2023 RatNewsNetwork. All rights reserved.</p>
     </footer>
 </body>
 </html>

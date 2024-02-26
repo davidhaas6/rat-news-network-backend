@@ -18,6 +18,8 @@ class Article:
     author: str = "Ratso Remulini"
     url: str = None
     img_path: str = None
+    generator: str = None
+    timestamp: str = None
 
     def from_json(json: dict, id=None):
         if "id" not in json and id is not None:

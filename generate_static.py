@@ -31,9 +31,9 @@ def main():
     if not os.path.exists("mirrors"):
         os.makedirs("mirrors")
     if not os.path.exists(dst_folder):
-        os.makedirs(dst_folder)
-        os.makedirs(dst_folder / "articles")
-        os.makedirs(dst_folder / "static")
+        os.makedirs(dst_folder.as_posix())
+        os.makedirs((dst_folder / "articles").as_posix())
+        os.makedirs((dst_folder / "static").as_posix())
     
     # pull site data
     download_index(os.path.join(dst_folder, "index.html"))
@@ -74,13 +74,12 @@ def download_articles(save_path, replace_url="/") -> List[str]:
             logging.debug("Saving article %s to %s", article.id, article_dst_path)
         
         # copy image
-        img_src = os.path.join('static/', article.img_path)
-        img_dst = os.path.join(save_path, f'{article.id}.png')
-        logging.debug("Copying %s to %s", img_src, img_dst)
-        shutil.copy(img_src, img_dst)
-
+        if article.img_path is not None:
+            img_src = os.path.join('static/', article.img_path)
+            img_dst = os.path.join(save_path, f'{article.id}.png')
+            logging.debug("Copying %s to %s", img_src, img_dst)
+            shutil.copy(img_src, img_dst)
         
-
     return site_paths
 
 

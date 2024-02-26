@@ -10,7 +10,7 @@ body, html {
     background: white;
     margin: 0;
     padding: 0;
-    height: 100vh;
+    height: 100%;
 }
 
 header {
@@ -57,12 +57,13 @@ footer {
     display: flex;
     flex-flow: column wrap;
     align-items: start;
+    justify-content: flex-start;
     /* text-align: center; */
 }
 
 .preview {
     max-width: 80%;
-    min-height: 40vh;
+    min-height: 20vh;
 
     color: var(--color3);
     font-size: small;
@@ -176,6 +177,8 @@ footer {
         flex-flow: row wrap;
         align-items: center;
         justify-content: space-around;
+        min-height: 30vh;
+        /* min-width: 100%; */
     }
 
     .preview img {
