@@ -1,4 +1,7 @@
+venv/
 .venv/
+.vscode/
+articlegen/samples/
 __pycache__/
 *.log
 mirrors/
