@@ -1,17 +1,18 @@
 # generate news articles
 from datetime import datetime
 from multiprocessing import Pool
-from typing import Tuple, Union, List
+from typing import List
 import logging
 import os
 from openai import OpenAI
 import yaml
 import json
-import uuid
 import sys
 import random
+import traceback
+import uuid
 
-VERBOSE = False
+VERBOSE = True
 journalist1_system = {
     "role": "system",
     "content": "Your name is Whisker Walters. You are a famous journalist and the chief news editor for Rat News Network. Your job is to come up with the next juicy story."   # noqa: E501
@@ -20,10 +21,7 @@ journalist1_system = {
 with open('prompts/system.yaml') as f:
     systems = yaml.safe_load(f)
 
-client = OpenAI(
-    # This is the default and can be omitted
-    api_key=os.environ.get("OPENAI_API_KEY"),
-)
+client = OpenAI()
 
 logging.basicConfig(
     # filename='logs/generator.log',
@@ -36,28 +34,22 @@ logger = logging.getLogger(__name__)
 
 
 
-
 def _cli_main():
     """Command line interface main function
     """
     global VERBOSE
     VERBOSE = True
+    if len(sys.argv) == 1:
+        print('usage: gen.py idea image full topic[topic_idea]')
+        return
     action = str(sys.argv[1])
     if 'idea' in action:
         print("\n***INITIAL IDEAS:")
         ideas = article_ideas(1)
-        # print(ideas)
-        outline = article_outline(ideas[0])
-        # print()
-        print(article_image(ideas[0], outline))
     elif 'full' in action:
-        logger.info(new_articles(3))
+        logger.info(new_articles(2))
     elif 'image' in action:
-        url = article_image("""{
-      "title": "The Secret to Squeaky Clean Whiskers: Rat Beauticians Revealed",
-      "description": "Ever wondered how rats maintain their impeccable whiskers? Look no further! We take you inside the exclusive world of rat beauticians who specialize in whisker grooming. From beard oils to mustache wax, we reveal the secrets and techniques these professionals employ to keep our whiskered companions looking sharp. Get ready for the ultimate rat pampering experience!",
-      "category": "Lifestyle"
-    }""","""""")
+        url = article_image("""The Secret to Squeaky Clean Whiskers: Rat Beauticians Revealed""", "Ever wondered how rats maintain their impeccable whiskers? Look no further! We take you inside the exclusive world of rat beauticians who specialize in whisker grooming. From beard oils to mustache wax, we reveal the secrets and techniques these professionals employ to keep our whiskered companions looking sharp. Get ready for the ultimate rat pampering experience!")
         print(url)
         logger.info(url)
     elif 'topic' in action:
@@ -78,9 +70,9 @@ def new_articles(num: int) -> List[dict]:
         return []
     ideas_str = article_ideas(num)
     ideas = json.loads(ideas_str)
-    ideas = ideas[list(ideas.keys())[0]]
+    ideas = ideas[list(ideas.keys())[0]] # ???
     with Pool(min(num, os.cpu_count())) as pool:
-        articles = pool.map(article_from_idea, map(json.dumps,ideas))   
+        articles = pool.map(article_from_idea, map(json.dumps, ideas))   
 
     return articles
 
@@ -94,7 +86,7 @@ def article_from_idea(idea: str) -> dict:
     Returns:
         dict: an article object. returns empty dict on error.
               keys:
-                url -> image url
+                img_path -> image url
                 title -> article title
                 overview -> article overview
                 body -> article body
@@ -102,35 +94,93 @@ def article_from_idea(idea: str) -> dict:
     """
     try:
         outline = article_outline(idea.strip())
-        text, version = article_body(idea, outline)
-        article = json.loads(text)
-        article['generator'] = version
-        article['url'] = article_image(idea,outline)
+        article = article_body(idea, outline)
+        article['img_path'] = article_image(article['title'], outline)
+        article['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        logger.info(f'*Article created*\nTitle: {article["title"]}\nImage: {article["img_path"]}\nOverview:{article["overview"]}')
+        article['article_id'] = str(uuid.uuid4())
+    except Exception as e:
+        logger.error(e)
+        logger.error(traceback.format_exc())
+        return None
+    return article
+
+
+def adhoc_article(topic: str, model='gpt-4', temp=0) -> dict:
+    """Create an article from an idea
+
+    Args:
+        idea (str): A description of the article
+
+    Returns:
+        dict: an article object. returns empty dict on error.
+              keys:
+                img_path -> image url
+                title -> article title
+                overview -> article overview
+                body -> article body
+                timestamp -> article timestamp 
+    """
+    try:
+        article_text = _get_text(client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are one of the world's best journalists, currently working at Rat News Network. You are known for writing articles that are well-structured, easy to read, and interesting."
+                },
+                {
+                    "role": "user",
+                    "content": f"Write a high-quality article about {topic}."
+                }
+            ],
+            model=model,
+            temperature=temp
+        ))
+        article = article_to_json(article_text)
+
+        # create the image
+        with open('prompts/images.yaml') as f:
+            prompts = yaml.safe_load(f)
+            
+        outline = _get_text(client.chat.completions.create([
+                {
+                    "role": "user",
+                    "content": prompts['summary'].replace('{{num_sentences}}', 4)
+                                                 .replace('{{title}}', article["title"])
+                                                 .replace('{{body}}', article["title"])
+                }
+            ],
+            model='gpt-35-turbo',
+            temperature=temp
+        ))
+        
+        article['img_path'] = article_image(article['title'])
         article['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         logger.info(f'*Article created*\nTitle: {article["title"]}\nImage: {article["url"]}\nOverview:{article["overview"]}')
     except Exception as e:
         logger.error(e)
+        logger.error(traceback.format_exc())
+        return None
     return article
-
 
 
 def get_ad_prompt(article: str) -> str:
     pass
 
 
-def article_image(article_idea: str, outline: str) -> str:
+def article_image(title: str, outline: str) -> str:
     with open('prompts/images.yaml') as f:
         prompts = yaml.safe_load(f)
 
     convo_1_ideas = [
         {
             "role": "user",
-            "content": prompts['brainstorming'].replace('{{idea}}', str(article_idea)).replace('{{outline}}', str(outline))
+            "content": prompts['brainstorming'].replace('{{title}}', title).replace('{{overview}}', outline)
         }
     ]
     chat_completion = client.chat.completions.create(
         messages=convo_1_ideas,
-        model="gpt-3.5-turbo",
+        model="gpt-4-turbo",
         temperature=0.7
     )
     ideas = _get_text(chat_completion)
@@ -139,6 +189,10 @@ def article_image(article_idea: str, outline: str) -> str:
         {
             "role": "assistant",
             "content": ideas
+        },
+        {
+            "role": "system",
+            "content": systems['discretize']
         },
         {
             "role": "user",
@@ -154,12 +208,12 @@ def article_image(article_idea: str, outline: str) -> str:
 
     response = client.images.generate(
         model="dall-e-3",
-        prompt=prompts['create'].replace('{{image_idea}}', img_idea_json),
+        prompt=prompts['create'].replace('{{image_idea}}', img_idea_json).replace('{{title}}', title),
         quality="standard",
         n=1,
     )
     for img in response.data:
-        logger.info("\n%s", img.revised_prompt)
+        logger.info("\nRevised prompt: %s", img.revised_prompt)
         logger.info("%s", img.url)
         
     image_url = response.data[0].url
@@ -325,11 +379,20 @@ def article_body(idea: str, outline: str, num_words=500) -> str:
             }
         ],
         # model="gpt-3.5-turbo",
-        model="gpt-4-1106-preview",
+        model="gpt-4-turbo-preview",
     )
     raw_article = _get_text(chat_completion).strip()
 
-    chat_completion = client.chat.completions.create(
+    article_json = article_to_json(raw_article)
+    article_json['generator'] = article_generator
+    return article_json
+
+
+def article_to_json(article_text: str, model="gpt-3.5-turbo") -> dict:
+    with open('prompts/article.yaml','rb') as f:
+        prompts = yaml.safe_load(f)
+
+    article_json_str = _get_text(client.chat.completions.create(
         messages=[
             {
                 "role": "system",
@@ -337,17 +400,19 @@ def article_body(idea: str, outline: str, num_words=500) -> str:
             },
             {
                 "role": "user",
-                "content":prompts['articleToJson'].replace('{{article}}', raw_article).strip()
+                "content":prompts['articleToJson'].replace('{{article}}', article_text).strip()
             }
         ],
-        model="gpt-3.5-turbo",
-        # model="gpt-4-1106-preview",
+        model=model,
         temperature=0
-    )
+    ))
 
-    article_text = _get_text(chat_completion)
-    
-    return _extract_jsonstr(article_text), article_generator
+    try:
+        return json.loads(_extract_jsonstr(article_json_str))
+    except json.JSONDecodeError as e:
+        logger.error(f'Json decode error: {e}')
+        logger.error(traceback.format_exc())
+        return {}
 
 
 def _get_text(chat_completion) -> str:
@@ -367,6 +432,7 @@ def _extract_jsonstr(text: str) -> str:
                        generation:{text}''')
         return text
     return text[text.find('{'):text.rfind('}')+1]
+
 
 
 if __name__ == '__main__':
