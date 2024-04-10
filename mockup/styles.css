@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap');
+
+:root {
+    --golden-yellow: #fbc62c;
+    --deep-black: #010100;
+    --cream: #FFF4D5;
+    --dark-gray: #3E3E3E;
+    --brownish-gray: #5A5551;
+}
+
+
+body {
+    font-family: 'Newsreader', serif;
+}
+
+h1, .header-text {
+    font-family: 'Newsreader', serif;
+    font-weight: 600;
+    
+}
+
+.secondary-content {
+    font-family: 'Bubblegum Sans', cursive;
+}
+
+
+
+body {
+    margin: 0;
+    padding: 00px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--deep-black);
+
+    font-family: 'Newsreader', serif;
+}
+
+header {
+    /* margin: 0; */
+    width: 100%;
+    height: fit-content;
+    max-height: 100px;
+    padding: 13px 300px;
+    padding-bottom: 0px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* padding: 0px 0px; */
+    background-color: var(--golden-yellow);
+    font-family: 'Futura', sans-serif;
+    font-weight: 700;
+}
+
+header h1 {
+    font-size: 72px;
+    color: var(--deep-black);
+    margin: 0;
+    flex: 5
+}
+
+.menu-blurb {
+    flex: 2;
+    text-overflow: ellipsis;
+    font-size: 10px;
+    text-align: center;
+    max-height: 60px;
+
+    padding: 0px 10px;
+}
+
+.menu-button {
+    flex: 1;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.rounded-button {
+    background-color: var(--deep-black);
+    color: var(--golden-yellow);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px; /* this creates the rounded corners */
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+    /* Optional: add some hover effect for better UX */
+}
+
+.rounded-button:hover {
+    background-color: #111100; /* slightly lighter black when hovered */
+}
+
+.rounded-button-ylw {
+    background-color: var(--golden-yellow);
+    color: var(--deep-black);
+    padding: 8px 8px;
+    border: none;
+    border-radius: 10px; /* this creates the rounded corners */
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+
+    /* Optional: add some hover effect for better UX */
+}
+
+
+.sub-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 20px;
+    background-color: var(--deep-black);
+    color: var(--cream);
+}
+
+.submenu-button {
+    width: 100%;
+    text-align: center;
+    border-right: 2px solid var(--cream);
+    border-bottom: 5px solid var(--cream) ;
+    /* width: fit-content; */
+    /* padding: 30px5px; */
+    transition: 0.3s;
+}
+
+.no-right-border{
+    border-right: none;
+}
+
+.submenu-button:hover {
+    border-bottom: 5px solid var(--golden-yellow) ;
+    color: var(--golden-yellow);
+    translate: 0px 1px;
+}
+
+.main-content {
+    width: 100%;
+    display: flex;
+    /* flex-flow: column; */
+    justify-content:space-evenly;
+    padding: 5px 20px ;
+    flex-wrap: wrap;
+    color: var(--golden-yellow)
+}
+
+.main-content .left {
+    flex: 3;
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.main-content .right {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.featured-rat
+{
+    flex: 1;
+    min-width: 200px;
+    height: 200px; /* You can adjust the height as needed */
+    margin: 5px 5px;
+}
+
+
+.book-recommendation {
+    flex:4;
+    min-width: 200px;
+    /* height: 200px; You can adjust the height as needed */
+    margin: 5px 5px;
+    /* background-color: var(--golden-yellow); */
+    color: var(--golden-yellow);
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.book-recommendation img {
+    height: 60%;
+    width: auto;
+    object-fit: cover;
+}
+
+.book-description {
+    padding: 0px 20px;
+}
+.book-description h2 {
+    margin: 0;
+}
+.book-description p { 
+    font-size: 8.5px;
+}
+.book-description hr {
+    /* padding: 0px 20px;
+     */
+     height: 1px;
+     background-color: var(--deep-black);
+     box-shadow: 0px -1px 1px rgba(98.4%,77.6%,17.3%,90%);
+     /* box-shadow: 0; */
+     border: 0;
+}
+
+.book-description .rounded-button {
+    box-shadow: -1px -1px 1px rgba(98.4%,77.6%,17.3%,70%); /* This adds the shadow */
+}
+
+
+.roloted-articles {
+    flex: 2;
+    min-width: 200px;
+    /* height: 200px; You can adjust the height as needed */
+    margin: 5px 5px;
+    background-color: var(--cream);
+    color: var(--deep-black);
+}
+
+
+.rat-classifieds,
+.related-articles
+{
+    flex: 1;
+    min-width: 200px;
+    height: 200px; /* You can adjust the height as needed */
+    margin: 5px;
+    background-color: var(--cream);
+
+    color: var(--deep-black);
+}
+.rat-articles {
+    flex: 3;
+    min-width: 200px;
+    height: 200px; /* You can adjust the height as needed */
+    margin: 5px;
+    background-color: var(--cream);
+    color: var(--deep-black);
+}
+
+.rat-articles h2 {
+    /* font-family: 'Bubblegum Sans', cursive; */
+}
+
+.divider {
+    width: 100%;
+    margin: 0;
+    height: 5px;
+    background-color: var(--cream);
+}
