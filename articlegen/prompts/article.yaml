@@ -192,7 +192,7 @@ article_gen5: |-
 
 articleToJson: |-
   # Task:
-  Create a JSON string containing the title, an overview, and the main body of a news article. 
+  Create a JSON string containing the title, an overview, and the main body of a news article. Keep the linebreaks in the main body of the article.
 
 
   # Article Data:
