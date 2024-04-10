@@ -1,20 +1,39 @@
 
 outline: |-
   ## Task:
-  As an expert journalist and writer, please write an interesting or engaging outline for an article on Rat News Network.
-
+  As an expert journalist and writer, write an interesting or engaging outline for an article on Rat News Network. This article takes place in the rat universe, where Rat News Network (RNN) is the predominant publication. You love your job, and are creating one of your favorite articles for RNN:
 
   ## Article idea:
   {{idea}}
 
 
-  ## Task Description:
-  First, you must refine the idea: determine the main message or theme you wish to convey, and state the target audience of the article. This will set help the writing style and content. Afterwards, create a **bullet-pointed outline** for the article.
+  ## Task:
+  First, refine the idea: determine the main message or theme you wish to convey, and state the target audience of the article. This will set help the writing style and content. Second, create a **bullet-pointed outline** for the article.
 
-  The article must be high quality.
-  The article must be **short**, meaning less than 8 paragraphs.
-  The article must be written like professional news articles from the New York Times.
-  The article must utilize an inverted pyramid structure.
+  ## Requirements:
+   - The outline must reflect high quality journalism.
+   - The outline should result in an interesting article.
+   - The article should utilize an inverted pyramid structure
+     - Inverted pyramid structure: the most fundamental facts—appear at the top of the story, in the lead paragraph. Non-essential information appears in the following paragraphs, or “nut” graphs, in order of importance.
+
+
+
+summary: |-
+  Create a great {{num_sentences}}-sentence summary of the following article. The summary must adhere to the following guidelines:
+
+  1. Craft a summary that is detailed, thorough, in-depth, and complex, while maintaining clarity and conciseness.
+
+  2. Incorporate main ideas and essential information, eliminating extraneous language and focusing on critical aspects.
+
+  3. Rely strictly on the provided text, without including external information.
+
+  4. Format the summary in paragraph form for easy understanding.
+
+  This process results in an high-quality summary written in a clear, concise, and reader-friendly manner.
+
+  # Article
+  ### {{title}}
+  {{body}}
 
 
 article_gen: |-
@@ -40,7 +59,7 @@ article_gen: |-
    - Use a clear, concise, and accessible writing style. Avoid jargon and overly complex sentences.
    - The tone should be informative and professional while remaining engaging and interesting.
    - Use varied language to avoid repetition.
-   - The article must use an inverted pyramid writing structure.
+   - The article must use an inverted pyramid writing structure, meaning the most fundamental facts—appear at the top of the story, in the lead paragraph. Non-essential information appears in the following paragraphs, or “nut” graphs, in order of importance.
    - Each paragraph must be SHORT. Between 15-30 words.
    - The article must be around {{num_words}} long.
 
@@ -68,7 +87,7 @@ article_gen2: |-
    - Use a clear, concise, and accessible writing style. Avoid jargon and overly complex sentences.
    - The tone should be informative and professional while remaining engaging and interesting.
    - Use varied language to avoid repetition.
-   - The article must use an inverted pyramid writing structure.
+   - The article must use an inverted pyramid writing structure: the most fundamental facts—appear at the top of the story, in the lead paragraph. Non-essential information appears in the following paragraphs, or “nut” graphs, in order of importance.
    - Each paragraph must be 10-30 words long.
    - The article must be around {{num_words}} long.
 
@@ -85,7 +104,7 @@ article_gen3: |-
 
 
   # Task: 
-  Compose a compelling story based on the given outline. Your piece will feature in Rat News Network, a renowned platform for rat-centric journalism. Aim for an eighth-grade reading level, using succinct news-style paragraphs. The article length is approximately {{num_words}} words. Excellence in this assignment brings a $5,000 bonus.
+  Compose a compelling story based on the outline. You are Whisker Walters, a seasoned journalist writing for Rat News Network, a renowned newspaper written "For Rats, by Rats." The article length must be less than {{num_words}} words and use succicnt, news-style paragraphs.
 
   Requirements:
   - Begin with a captivating first sentence (30-45 words) that effectively summarizes the story's core elements.
@@ -95,7 +114,7 @@ article_gen3: |-
   - Employ clear, concise language; avoid technical jargon and overly complex structures.
   - Maintain an informative, professional tone that is also engaging.
   - Use diverse vocabulary to prevent repetition.
-  - Adhere to the inverted pyramid structure in your writing.
+  - Adhere to the inverted pyramid structure: the most fundamental facts—appear at the top of the story, in the lead paragraph. Non-essential information appears in the following paragraphs, or “nut” graphs, in order of importance.
   - Keep each paragraph within 10-30 words.
   - Ensure the total word count is around {{num_words}}.
 
@@ -125,7 +144,7 @@ article_gen4: |-
   - **Clarity and Accessibility**: Use clear, concise language, avoiding jargon and complex structures.
   - **Professional Yet Engaging Tone**: Maintain an informative and professional tone while keeping the content engaging.
   - **Varied Vocabulary**: Use diverse vocabulary to prevent repetition and maintain interest.
-  - **Structured Writing**: Adhere to the inverted pyramid structure.
+  - **Structured Writing**: Adhere to the inverted pyramid structure: the most fundamental facts—appear at the top of the story, in the lead paragraph. Non-essential information appears in the following paragraphs, or “nut” graphs, in order of importance.
   - **Flexible Paragraphs**: Keep paragraphs concise and focused, with flexible length for content suitability.
   - **Inclusion of Data**: Integrate relevant data or statistics for credibility and depth.
   - **Visual Elements**: Suggest appropriate visual elements like photographs or infographics.
@@ -162,7 +181,7 @@ article_gen5: |-
   - **Clear, Concise Style**: Avoid jargon; keep it simple and accessible.
   - **Professional Tone**: Informative yet engaging.
   - **Varied Vocabulary**: Avoid repetition.
-  - **Structured Writing**: Follow the inverted pyramid model.
+  - **Structured Writing**: Follow the inverted pyramid model: the most fundamental facts—appear at the top of the story, in the lead paragraph. Non-essential information appears in the following paragraphs, or “nut” graphs, in order of importance.
   - **Paragraph Length**: Keep paragraphs concise; length as per content.
   - **Data and Visuals**: Incorporate relevant data and suggest visuals.
   - **Ethical Standards**: Uphold journalism ethics and cultural sensitivity.
