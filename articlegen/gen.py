@@ -11,6 +11,8 @@ import sys
 import random
 import traceback
 import uuid
+import pathlib
+from pathlib import Path
 
 VERBOSE = True
 journalist1_system = {
@@ -18,7 +20,8 @@ journalist1_system = {
     "content": "Your name is Whisker Walters. You are a famous journalist and the chief news editor for Rat News Network. Your job is to come up with the next juicy story."   # noqa: E501
 }
 
-with open('prompts/system.yaml') as f:
+prompts_dir = Path(__file__).resolve().parent / 'prompts'
+with open(prompts_dir / 'system.yaml') as f:
     systems = yaml.safe_load(f)
 
 client = OpenAI()
@@ -47,7 +50,7 @@ def _cli_main():
         print("\n***INITIAL IDEAS:")
         ideas = article_ideas(1)
     elif 'full' in action:
-        logger.info(new_articles(2))
+        logger.info(new_articles(int(sys.argv[2]) if len(sys.argv) > 1 else 2))
     elif 'image' in action:
         url = article_image("""The Secret to Squeaky Clean Whiskers: Rat Beauticians Revealed""", "Ever wondered how rats maintain their impeccable whiskers? Look no further! We take you inside the exclusive world of rat beauticians who specialize in whisker grooming. From beard oils to mustache wax, we reveal the secrets and techniques these professionals employ to keep our whiskered companions looking sharp. Get ready for the ultimate rat pampering experience!")
         print(url)
@@ -70,9 +73,12 @@ def new_articles(num: int) -> List[dict]:
         return []
     ideas_str = article_ideas(num)
     ideas = json.loads(ideas_str)
-    ideas = ideas[list(ideas.keys())[0]] # ???
+    print(list(ideas.keys())[0])
+    ideas = ideas[list(ideas.keys())[0]] # output json has a single key
+    
     with Pool(min(num, os.cpu_count())) as pool:
-        articles = pool.map(article_from_idea, map(json.dumps, ideas))   
+        string_ideas = map(json.dumps, ideas)
+        articles = pool.map(article_from_idea, string_ideas)   
 
     return articles
 
@@ -139,7 +145,7 @@ def adhoc_article(topic: str, model='gpt-4', temp=0) -> dict:
         article = article_to_json(article_text)
 
         # create the image
-        with open('prompts/images.yaml') as f:
+        with open(prompts_dir / 'images.yaml') as f:
             prompts = yaml.safe_load(f)
             
         outline = _get_text(client.chat.completions.create([
@@ -156,7 +162,7 @@ def adhoc_article(topic: str, model='gpt-4', temp=0) -> dict:
         
         article['img_path'] = article_image(article['title'])
         article['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        logger.info(f'*Article created*\nTitle: {article["title"]}\nImage: {article["url"]}\nOverview:{article["overview"]}')
+        logger.info(f'*Article created*\nTitle: {article["title"]}\nImage: {article["img_path"]}\nOverview:{article["overview"]}')
     except Exception as e:
         logger.error(e)
         logger.error(traceback.format_exc())
@@ -169,7 +175,7 @@ def get_ad_prompt(article: str) -> str:
 
 
 def article_image(title: str, outline: str) -> str:
-    with open('prompts/images.yaml') as f:
+    with open(prompts_dir / 'images.yaml') as f:
         prompts = yaml.safe_load(f)
 
     convo_1_ideas = [
@@ -229,7 +235,7 @@ def article_ideas(n, system_prompt='whisker') -> str:
     Returns:
         str: a string containing a set of article ideas
     """
-    with open('prompts/ideas.yaml','rb') as f:
+    with open(prompts_dir / 'ideas.yaml','rb') as f:
         prompts = yaml.safe_load(f)
     
     convo_1_ideas = [
@@ -321,7 +327,7 @@ def article_outline(idea: str) -> str:
     Returns:
         str: A brief outline for the article
     """
-    with open('prompts/article.yaml','rb') as f:
+    with open(prompts_dir / 'article.yaml','rb') as f:
         prompts = yaml.safe_load(f)
     
     chat_completion = client.chat.completions.create(
@@ -360,7 +366,7 @@ def article_body(idea: str, outline: str, num_words=500) -> str:
         str: generator version
     """
     
-    with open('prompts/article.yaml','rb') as f:
+    with open(prompts_dir / 'article.yaml','rb') as f:
         prompts = yaml.safe_load(f)
 
     article_generator = random.choice([k for k in prompts.keys() if k.startswith('article_gen')])
@@ -389,7 +395,7 @@ def article_body(idea: str, outline: str, num_words=500) -> str:
 
 
 def article_to_json(article_text: str, model="gpt-3.5-turbo") -> dict:
-    with open('prompts/article.yaml','rb') as f:
+    with open(prompts_dir / 'article.yaml','rb') as f:
         prompts = yaml.safe_load(f)
 
     article_json_str = _get_text(client.chat.completions.create(

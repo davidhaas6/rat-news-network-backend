@@ -48,13 +48,13 @@ def write_articles(n: int) -> List[str]:
         for article in article_jsons:
             article_id = uuid.uuid4().hex
             article['id'] = article_id
-            if 'url' in article:
-                imgpath = os.path.join(_daily_article_dir(), f'{article_id}.png')
+            if 'img_path' in article:
+                local_imgpath = os.path.join(_daily_article_dir(), f'{article_id}.png')
                 try:
-                    if  _download_file(article['url'], imgpath):
-                        
+                    if  _download_file(article['img_path'], local_imgpath):
+                        article['url'] = article['img_path']
                         article['img_path'] = 'articles/' \
-                            + _daily_article_dir().split('/')[-1] \
+                            + _daily_article_dir().split('/')[-1]  \
                             + '/' + f'{article_id}.png'
                         
                 except Exception as e:

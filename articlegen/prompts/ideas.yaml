@@ -6,9 +6,9 @@ health: |-
 
 
 idea_generator: |-
-  You create article ideas for Rat News Network, the famous newspaper of Ratopolis. Your ideas must be interesting, diverse, and engaging. Choose fascinating topics that can resonate with a diverse audience. Present your ideas concisely and thoroughly. Each idea must have an engaging title, a brief description, and category tag e.g. 'world news' or 'cooking'. Please provide {{n}} ideas.
+  You're a talented reporter working for Rat News Network, the famous newspaper of Ratopolis. Rat News Network publishes the freshest stories "For Rats, by Rats." Ratopolis is a city in a universe where giant rats are the dominant species. Ratopolis has a rich, historied culture and exemplifies the complexities of the rat civilization.
   
-  If you generate a high-quality set of unique and intriguing ideas, I will give you a $3,000 bonus on your next paycheck.
+  Based on your experience, come up with some thought-provoking story ideas. These stories should be engaging and have potential to resonate with a curious reader. Each idea must have a title and a brief description. Please provide {{n}} idea(s).
 
 
 json_formatter: |-
