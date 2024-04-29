@@ -13,6 +13,7 @@ import traceback
 import uuid
 import pathlib
 from pathlib import Path
+from groq import Groq
 
 VERBOSE = True
 journalist1_system = {
@@ -24,7 +25,12 @@ prompts_dir = Path(__file__).resolve().parent / 'prompts'
 with open(prompts_dir / 'system.yaml') as f:
     systems = yaml.safe_load(f)
 
-client = OpenAI()
+client = Groq()
+image_client = OpenAI()
+
+json_llm = 'mixtral-8x7b-32768'
+light_llm = 'llama3-8b-8192'
+heavy_llm = 'llama3-70b-8192'
 
 logging.basicConfig(
     # filename='logs/generator.log',
@@ -112,7 +118,7 @@ def article_from_idea(idea: str) -> dict:
     return article
 
 
-def adhoc_article(topic: str, model='gpt-4', temp=0) -> dict:
+def adhoc_article(topic: str, model=heavy_llm, temp=0) -> dict:
     """Create an article from an idea
 
     Args:
@@ -156,7 +162,7 @@ def adhoc_article(topic: str, model='gpt-4', temp=0) -> dict:
                                                  .replace('{{body}}', article["title"])
                 }
             ],
-            model='gpt-35-turbo',
+            model=light_llm,
             temperature=temp
         ))
         
@@ -186,7 +192,7 @@ def article_image(title: str, outline: str) -> str:
     ]
     chat_completion = client.chat.completions.create(
         messages=convo_1_ideas,
-        model="gpt-4-turbo",
+        model=heavy_llm,
         temperature=0.7
     )
     ideas = _get_text(chat_completion)
@@ -207,12 +213,12 @@ def article_image(title: str, outline: str) -> str:
     ]
     chat_completion = client.chat.completions.create(
         messages=convo_2_discretize,
-        model="gpt-3.5-turbo",
+        model=json_llm,
         temperature=0
     )
     img_idea_json = _extract_jsonstr(_get_text(chat_completion))
 
-    response = client.images.generate(
+    response = image_client.images.generate(
         model="dall-e-3",
         prompt=prompts['create'].replace('{{image_idea}}', img_idea_json).replace('{{title}}', title),
         quality="standard",
@@ -250,8 +256,7 @@ def article_ideas(n, system_prompt='whisker') -> str:
     ]
     chat_completion = client.chat.completions.create(
         messages=convo_1_ideas,
-        model="gpt-4",
-        # model="gpt-3.5-turbo",
+        model=heavy_llm,
         temperature=1
     )
     ideas = _get_text(chat_completion)
@@ -268,7 +273,7 @@ def article_ideas(n, system_prompt='whisker') -> str:
     ]
     chat_completion2 = client.chat.completions.create(
         messages=convo_2_discretize,
-        model="gpt-3.5-turbo",
+        model=json_llm,
         temperature=0
     )
 
@@ -288,7 +293,7 @@ def select_idea(ideas: str) -> str:
                 "content": f"# Article Ideas:\n\n{ideas}",
             }
         ],
-        model="gpt-3.5-turbo",
+        model=heavy_llm,
     )
     best_article = _get_text(chat_completion)
 
@@ -311,7 +316,7 @@ def select_idea(ideas: str) -> str:
                 "content": "Thank you! Now, please **copy** the article's title, description, and a summary of your editorial analysis into a *valid* JSON formatted string.",  # noqa: E501
             },
         ],
-        model="gpt-3.5-turbo"
+        model=light_llm
     )
     idea_json = _get_text(chat_completion)
     idea_json = idea_json[idea_json.find('{'):idea_json.rfind('}')+1]
@@ -341,8 +346,7 @@ def article_outline(idea: str) -> str:
                 "content": prompts['outline'].replace('{{idea}}',idea.strip()),
             }
         ],
-        # model="gpt-3.5-turbo",
-        model="gpt-4-1106-preview",
+        model=heavy_llm,
         temperature=0.2
     )
     return _get_text(chat_completion)
@@ -384,8 +388,7 @@ def article_body(idea: str, outline: str, num_words=500) -> str:
                                                     .replace('{{num_words}}', str(num_words)).strip()
             }
         ],
-        # model="gpt-3.5-turbo",
-        model="gpt-4-turbo-preview",
+        model=heavy_llm,
     )
     raw_article = _get_text(chat_completion).strip()
 
@@ -394,15 +397,20 @@ def article_body(idea: str, outline: str, num_words=500) -> str:
     return article_json
 
 
-def article_to_json(article_text: str, model="gpt-3.5-turbo") -> dict:
+def article_to_json(article_text: str, model=heavy_llm) -> dict:
     with open(prompts_dir / 'article.yaml','rb') as f:
         prompts = yaml.safe_load(f)
+
+    other_args = {}
+    if type(client) == Groq:
+        print('groq')
+        other_args["response_format"] = {"type": "json_object"}
 
     article_json_str = _get_text(client.chat.completions.create(
         messages=[
             {
                 "role": "system",
-                "content": systems['discretize']
+                "content": systems['article_to_json']
             },
             {
                 "role": "user",
@@ -410,7 +418,9 @@ def article_to_json(article_text: str, model="gpt-3.5-turbo") -> dict:
             }
         ],
         model=model,
-        temperature=0
+        temperature=0,
+        # **other_args
+        response_format= {"type": "json_object"}
     ))
 
     try:
