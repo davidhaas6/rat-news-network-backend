@@ -1,7 +1,7 @@
 
 outline: |-
   ## Task:
-  As an expert journalist and writer, write an interesting or engaging outline for an article on Rat News Network. This article takes place in the rat universe, where Rat News Network (RNN) is the predominant publication. You love your job, and are creating one of your favorite articles for RNN:
+  As an expert journalist and writer, write an interesting or engaging outline for an article on Rat News Network. This article takes place in the rat universe, where Rat News Network (RNN) is the predominant publication.
 
   ## Article idea:
   {{idea}}
@@ -12,9 +12,10 @@ outline: |-
 
   ## Requirements:
    - The outline must reflect high quality journalism.
-   - The outline should result in an interesting article.
    - The article should utilize an inverted pyramid structure
-     - Inverted pyramid structure: the most fundamental facts—appear at the top of the story, in the lead paragraph. Non-essential information appears in the following paragraphs, or “nut” graphs, in order of importance.
+     - Inverted pyramid structure: the most fundamental facts—appear at the top of the story, in the lead paragraph.Non-essential information appears in the following paragraphs, in order of importance.
+   - Interweave quotes from citizens of Ratopolis throughout your story.
+   - Ensure the article is interesting to read.
 
 
 
@@ -192,17 +193,7 @@ article_gen5: |-
 
 articleToJson: |-
   # Task:
-  Create a JSON string containing the title, an overview, and the main body of a news article. Keep the linebreaks in the main body of the article.
+  Create a JSON string containing the article's title, its overview, and an exact copy of its main body.
 
-
-  # Article Data:
-  ```
+  # Article:
   {{article}}
-  ```
-
-  # JSON schema:
-  {
-    "title": string,
-    "overview": string,
-    "body": string
-  }
