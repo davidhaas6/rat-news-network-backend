@@ -46,8 +46,8 @@ def write_articles(n: int) -> List[str]:
     try:
         article_jsons = gen.new_articles(num_new)
         for article in article_jsons:
-            article_id = uuid.uuid4().hex
-            article['id'] = article_id
+            article_id = article['article_id']  # new articles have article_id
+            article['id'] = article_id  # backwards compatibility
             if 'img_path' in article:
                 local_imgpath = os.path.join(_daily_article_dir(), f'{article_id}.png')
                 try:

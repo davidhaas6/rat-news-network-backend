@@ -12,6 +12,7 @@ ARTICLE_PATH = (Path(__file__).parent.absolute() / "static" / "articles").as_pos
 @dataclass
 class Article:
     id: str
+    article_id: str
     title: str
     body: str
     overview: str = None
