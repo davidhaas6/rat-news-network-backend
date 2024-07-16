@@ -25,12 +25,12 @@ prompts_dir = Path(__file__).resolve().parent / 'prompts'
 with open(prompts_dir / 'system.yaml') as f:
     systems = yaml.safe_load(f)
 
-client = Groq()
+client = OpenAI()
 image_client = OpenAI()
 
-json_llm = 'mixtral-8x7b-32768'
-light_llm = 'llama3-8b-8192'
-heavy_llm = 'llama3-70b-8192'
+json_llm = 'gpt-4o'
+light_llm = 'gpt-35-turbo'
+heavy_llm = 'gpt-4o'
 
 logging.basicConfig(
     # filename='logs/generator.log',
@@ -58,15 +58,20 @@ def _cli_main():
     elif 'full' in action:
         logger.info(new_articles(int(sys.argv[2]) if len(sys.argv) > 1 else 2))
     elif 'image' in action:
-        url = article_image("""The Secret to Squeaky Clean Whiskers: Rat Beauticians Revealed""", "Ever wondered how rats maintain their impeccable whiskers? Look no further! We take you inside the exclusive world of rat beauticians who specialize in whisker grooming. From beard oils to mustache wax, we reveal the secrets and techniques these professionals employ to keep our whiskered companions looking sharp. Get ready for the ultimate rat pampering experience!")
+        if len(sys.argv) < 4:
+            print('usage: gen.py image <title> <outline>')
+            return
+        url = article_image(sys.argv[2], sys.argv[3])
         print(url)
         logger.info(url)
     elif 'topic' in action:
         article_from_idea(sys.argv[2])
+    
 
 
 
-def new_articles(num: int) -> List[dict]:
+
+def new_articles(num: int, ideas=None) -> List[dict]:
     """Generates a list of new articles
 
     Args:
@@ -77,13 +82,16 @@ def new_articles(num: int) -> List[dict]:
     """
     if num <= 0:
         return []
-    ideas_str = article_ideas(num)
-    ideas = json.loads(ideas_str)
-    print(list(ideas.keys())[0])
-    ideas = ideas[list(ideas.keys())[0]] # output json has a single key
+    if ideas is None:
+        ideas_str = article_ideas(num)
+        ideas = json.loads(ideas_str)
+        ideas = ideas[list(ideas.keys())[0]] # output json has a single key
     
-    with Pool(min(num, os.cpu_count())) as pool:
+    num_cpus = min(6, os.cpu_count())
+    n_threads = min(num, num_cpus)
+    with Pool(n_threads) as pool:
         string_ideas = map(json.dumps, ideas)
+        print("Generating articles. Ideas:", string_ideas)
         articles = pool.map(article_from_idea, string_ideas)   
 
     return articles
@@ -118,11 +126,13 @@ def article_from_idea(idea: str) -> dict:
     return article
 
 
-def adhoc_article(topic: str, model=heavy_llm, temp=0) -> dict:
+def adhoc_article(topic: str, title=None, model=heavy_llm, temp=0) -> dict:
     """Create an article from an idea
 
     Args:
-        idea (str): A description of the article
+        topic (str): A description of the article
+        model (str): the model to use for generation
+        temp (float): the temperature to use for generation
 
     Returns:
         dict: an article object. returns empty dict on error.
@@ -142,7 +152,7 @@ def adhoc_article(topic: str, model=heavy_llm, temp=0) -> dict:
                 },
                 {
                     "role": "user",
-                    "content": f"Write a high-quality article about {topic}."
+                    "content": f"Write a high-quality article for the following topic: {topic}"
                 }
             ],
             model=model,
@@ -151,13 +161,13 @@ def adhoc_article(topic: str, model=heavy_llm, temp=0) -> dict:
         article = article_to_json(article_text)
 
         # create the image
-        with open(prompts_dir / 'images.yaml') as f:
+        with open(prompts_dir / 'article.yaml') as f:
             prompts = yaml.safe_load(f)
             
-        outline = _get_text(client.chat.completions.create([
+        summary = _get_text(client.chat.completions.create(messages=[
                 {
                     "role": "user",
-                    "content": prompts['summary'].replace('{{num_sentences}}', 4)
+                    "content": prompts['summary'].replace('{{num_sentences}}', '3')
                                                  .replace('{{title}}', article["title"])
                                                  .replace('{{body}}', article["title"])
                 }
@@ -165,8 +175,8 @@ def adhoc_article(topic: str, model=heavy_llm, temp=0) -> dict:
             model=light_llm,
             temperature=temp
         ))
-        
-        article['img_path'] = article_image(article['title'])
+        article['summary'] = summary  # unused rn
+        article['img_path'] = article_image(article['title'], summary)
         article['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         logger.info(f'*Article created*\nTitle: {article["title"]}\nImage: {article["img_path"]}\nOverview:{article["overview"]}')
     except Exception as e:
@@ -337,13 +347,13 @@ def article_outline(idea: str) -> str:
     
     chat_completion = client.chat.completions.create(
         messages=[
-            {
-                "role": "system",
-                "content": systems['whisker'],
-            },
+            # {
+            #     "role": "system",
+            #     "content": systems['whisker'],
+            # },
             {
                 "role": "user",
-                "content": prompts['outline'].replace('{{idea}}',idea.strip()),
+                "content": prompts['outline2'].replace('{{idea}}',idea.strip()),
             }
         ],
         model=heavy_llm,
@@ -432,6 +442,15 @@ def article_to_json(article_text: str, model=heavy_llm) -> dict:
 
 
 def _get_text(chat_completion) -> str:
+    text = chat_completion.choices[0].message.content
+    if VERBOSE:
+        print(text)
+        # logger.info()
+        logger.debug('\n%s', text)
+    # TODO: error handle
+    return text
+
+def query_llm(chat_completion) -> str:
     text = chat_completion.choices[0].message.content
     if VERBOSE:
         print(text)

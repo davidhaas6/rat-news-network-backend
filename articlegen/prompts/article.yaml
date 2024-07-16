@@ -13,24 +13,61 @@ outline: |-
   ## Requirements:
    - The outline must reflect high quality journalism.
    - The article should utilize an inverted pyramid structure
-     - Inverted pyramid structure: the most fundamental facts—appear at the top of the story, in the lead paragraph.Non-essential information appears in the following paragraphs, in order of importance.
+     - Inverted pyramid structure: the most fundamental facts—appear at the top of the story, in the lead paragraph. Non-essential information appears in the following paragraphs, in order of importance.
    - Interweave quotes from citizens of Ratopolis throughout your story.
    - Ensure the article is interesting to read.
+   - The article should be a 3-5 minute read.
+
+
+outline2: |-
+  ## Task:
+  As an expert journalist and writer, write an interesting and engaging outline for an article on Rat News Network (RNN). This article takes place in the rat universe, where RNN is the predominant publication.
+
+  ## Article idea:
+  {{idea}}
+
+  ## Task:
+  First, refine the idea: determine the main message or theme you wish to convey, and state the target audience of the article. This will set the writing style and content. Second, create a **bullet-pointed outline** for the article.
+
+  ## Requirements:
+  - **High-quality journalism**:
+    - Well-researched with accurate information
+    - Balanced reporting with multiple perspectives
+    - Clear, concise, and engaging writing style
+  - **Inverted pyramid structure**:
+    - **Lead Section**: Summarize the most crucial facts and main idea (who, what, when, where, why, how)
+    - **Key Details Section**: Provide important details and context that expand on the lead
+    - **Additional Information Section**: Offer further context, analysis, and relevant quotes
+    - **Non-essential Information Section**: Include lesser details or background information if space allows
+  - **Quotes from citizens**:
+    - Include two or three quotes from Ratopolis residents to add depth and authenticity
+    - Ensure quotes are relevant and enhance the story. 
+    - At least one quote should involve a clever pun
+  - **Readability**:
+    - Target a 3-5 minute read (approximately 600-800 words)
+    - Use clear and engaging language suitable for the target audience
+
+  ## Steps:
+  1. Determine the main message or theme of the article based on the idea provided.
+  2. Define the target audience for the article.
+  3. Create a bullet-pointed outline following the inverted pyramid structure.
+  4. Include at least three quotes from citizens of Ratopolis.
+  5. Ensure the outline supports a 3-5 minute read and maintains high-quality journalism standards.
+
+
 
 
 
 summary: |-
-  Create a great {{num_sentences}}-sentence summary of the following article. The summary must adhere to the following guidelines:
+  Create a {{num_sentences}}-sentence summary of the following article. The summary must:
 
-  1. Craft a summary that is detailed, thorough, in-depth, and complex, while maintaining clarity and conciseness.
+  1. Be detailed, thorough, in-depth, and complex, while maintaining clarity and conciseness.
 
-  2. Incorporate main ideas and essential information, eliminating extraneous language and focusing on critical aspects.
+  2. Incorporates main ideas and essential information, eliminating extraneous language and focusing on critical aspects.
 
   3. Rely strictly on the provided text, without including external information.
 
-  4. Format the summary in paragraph form for easy understanding.
-
-  This process results in an high-quality summary written in a clear, concise, and reader-friendly manner.
+  This process will result in an high-quality summary that is clear, concise, and reader-friendly manner.
 
   # Article
   ### {{title}}
@@ -62,7 +99,7 @@ article_gen: |-
    - Use varied language to avoid repetition.
    - The article must use an inverted pyramid writing structure, meaning the most fundamental facts—appear at the top of the story, in the lead paragraph. Non-essential information appears in the following paragraphs, or “nut” graphs, in order of importance.
    - Each paragraph must be SHORT. Between 15-30 words.
-   - The article must be around {{num_words}} long.
+   - The article must be around {{num_words}} words long.
 
 
 article_gen2: |-

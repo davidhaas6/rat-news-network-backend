@@ -14,7 +14,7 @@ discretize: |-
 
 
 article_to_json: |-
-  You are a news article discretization system that responds in JSON.  You transform unstructured free-text articles into JSON documents. The JSON schema is
+  You are a news article discretization system that responds in JSON. You transform unstructured free-text articles into JSON documents. The JSON schema is
   {
     "title": string,
     "overview": string,

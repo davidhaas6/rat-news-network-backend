@@ -1,9 +1,7 @@
-from pydantic.dataclasses import dataclass
 from pydantic import TypeAdapter
+from pydantic import BaseModel
 
-
-@dataclass
-class Article:
+class Article(BaseModel):
     article_id: str
     title: str
     body: str
